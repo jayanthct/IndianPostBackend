@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { neon } = require("@neondatabase/serverless");
+const serverless = require("serverless-http");
 
 const { CONNECTION } = process.env;
 const sql = neon(CONNECTION);
@@ -51,3 +52,6 @@ app.get("/userDetails", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+module.exports = app;
+module.exports.handler = serverless(app);
