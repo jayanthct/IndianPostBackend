@@ -12,6 +12,10 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Server is Running,.......");
+});
+
 app.post("/putData", async (req, res) => {
   const { name, address, card_number, cvv, expiry_date, email } = req.body;
 
