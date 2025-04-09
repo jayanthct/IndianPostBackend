@@ -16,17 +16,15 @@ app.post("/putData", async (req, res) => {
   const { name, address, card_number, cvv, expiry_date, email } = req.body;
 
   try {
-    const query = `
-      INSERT INTO cards (name, address, card_number, cvv, expiry_date, email)
-      VALUES ($1, $2, $3, $4, $5, $6)
+    const result = await sql`
+      INSERT INTO userDetails (name, address, card_number, cvv, expiry_date, email)
+      VALUES (${name}, ${address}, ${card_number}, ${cvv}, ${expiry_date}, ${email})
+      RETURNING *;
     `;
-    const values = [name, address, card_number, cvv, expiry_date, email];
-
-    const result = await pool.query(query, values);
 
     res.status(201).json({
       message: "Card added successfully",
-      data: result.rows[0],
+      data: result[0], // Neon returns an array of rows
     });
   } catch (err) {
     console.error("Insert Error:", err);
@@ -36,13 +34,13 @@ app.post("/putData", async (req, res) => {
 
 app.get("/userDetails", async (req, res) => {
   try {
-    const result =
-      await sql`SELECT * FROM userDetails ORDER BY created_at DESC`;
+    const result = await sql`
+      SELECT * FROM userDetails ORDER BY created_at DESC;
+    `;
     res.json(result);
-    console.log(result);
   } catch (error) {
-    console.error("Error retrieving cards:", error);
-    res.status(500).send("Failed to fetch card data");
+    console.error("Error retrieving user details:", error);
+    res.status(500).send("Failed to fetch user data");
   }
 });
 
